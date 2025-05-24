@@ -87,6 +87,7 @@ function RegistrationScreen() {
         value={name}
         onChangeText={setName}
         style={styles.input}
+        placeholderTextColor="black"
       />
       <TextInput
         placeholder="Email"
@@ -94,6 +95,7 @@ function RegistrationScreen() {
         onChangeText={setEmail}
         keyboardType="email-address"
         style={styles.input}
+        placeholderTextColor="black"
       />
       <TextInput
         placeholder="Phone"
@@ -101,6 +103,7 @@ function RegistrationScreen() {
         onChangeText={setPhone}
         keyboardType="phone-pad"
         style={styles.input}
+        placeholderTextColor="black"
       />
       <View style={styles.passwordContainer}>
         <TextInput
@@ -109,6 +112,7 @@ function RegistrationScreen() {
           onChangeText={setPassword}
           secureTextEntry={!showPassword}
           style={styles.passwordInput}
+          placeholderTextColor="black"
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           <Ionicons
@@ -125,6 +129,7 @@ function RegistrationScreen() {
           onChangeText={setConfirmPassword}
           secureTextEntry={!showConfirmPassword}
           style={styles.passwordInput}
+          placeholderTextColor="black"
         />
         <TouchableOpacity
           onPress={() => setShowConfirmPassword(!showConfirmPassword)}

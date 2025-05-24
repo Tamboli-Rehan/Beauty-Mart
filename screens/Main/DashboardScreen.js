@@ -1,4 +1,5 @@
 // DashboardScreen.js
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import { getAuth } from "firebase/auth";
@@ -99,12 +100,29 @@ const DashboardScreen = () => {
       <Text style={styles.cardCount}>{count}</Text>
     </TouchableOpacity>
   );
+  const handleLogout = () => {
+    const auth = getAuth();
+    auth.signOut().then(() => {
+      console.log("User signed out");
+      navigation.navigate("Login");
+    });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>📊 Dashboard Summary</Text>
-
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={styles.header}>📊 Dashboard Summary</Text>
+          <TouchableOpacity
+            onPress={handleLogout}
+            style={{ alignItems: "center" }}
+          >
+            <Ionicons name="log-out-outline" size={24} color="black" />
+            <Text style={{ fontSize: 12, color: "black", marginTop: 2 }}>
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.cardContainer}>
           <StatCard
             title="Categories"

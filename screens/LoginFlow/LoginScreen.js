@@ -80,6 +80,7 @@ export default function LoginScreen() {
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
+        placeholderTextColor="black"
       />
       <TextInput
         placeholder="Password"
@@ -87,6 +88,7 @@ export default function LoginScreen() {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        placeholderTextColor="black"
       />
       <Button title="Login" onPress={handleUserLogin} />
       <Text style={styles.link} onPress={() => navigation.navigate("Register")}>

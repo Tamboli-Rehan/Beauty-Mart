@@ -146,7 +146,6 @@ export default function ProductScreen() {
       const imageUrl = data.secure_url;
       const publicId = data.public_id;
 
-
       // Save product info in Firestore
       try {
         const docRef = await addDoc(collection(db, "products"), {
@@ -234,6 +233,7 @@ export default function ProductScreen() {
           onChangeText={setName}
           style={styles.input}
           editable={!loading}
+          placeholderTextColor="black"
         />
         <TextInput
           placeholder="Quantity"
@@ -242,6 +242,7 @@ export default function ProductScreen() {
           keyboardType="numeric"
           style={styles.input}
           editable={!loading}
+          placeholderTextColor="black"
         />
         {/* <TextInput
           placeholder="Category"
@@ -268,6 +269,7 @@ export default function ProductScreen() {
           multiline
           style={[styles.input, { height: 80 }]}
           editable={!loading}
+          placeholderTextColor="black"
         />
 
         <Button
