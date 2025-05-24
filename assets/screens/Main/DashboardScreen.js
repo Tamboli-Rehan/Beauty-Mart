@@ -71,7 +71,6 @@ const DashboardScreen = () => {
           // Fetch total registered users
           const userSnapshot = await getDocs(collection(db, "users"));
           const totalUsers = userSnapshot.size;
-          console.log("Registered users count:", totalUsers);
 
           // Set products and stats
           setProducts(userProducts);

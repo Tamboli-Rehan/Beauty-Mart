@@ -55,7 +55,6 @@ function RegistrationScreen() {
       .then(async (userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log("User registered:", user);
         await setDoc(doc(db, "users", user.uid), {
           name,
           email,

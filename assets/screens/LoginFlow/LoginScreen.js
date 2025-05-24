@@ -55,7 +55,6 @@ export default function LoginScreen() {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log("User logged in:", user);
         Toast.show({
           type: "success",
           text1: "Login successful",

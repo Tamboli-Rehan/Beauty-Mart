@@ -6,8 +6,8 @@ import Toast from "react-native-toast-message";
 import { auth } from "../../firebaseConfigue";
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("rehan.j.tamboli112@gmail.com");
-  const [password, setPassword] = useState("qwerty123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const navigation = useNavigation();
 

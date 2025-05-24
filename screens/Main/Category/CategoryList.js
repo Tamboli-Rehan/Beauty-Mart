@@ -61,7 +61,12 @@ const screenWidth = Dimensions.get("window").width;
 const CategoryList = () => {
   const navigation = useNavigation();
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() =>
+        navigation.navigate("FilteredCategory", { category: item.name })
+      }
+    >
       <Image source={{ uri: item.image }} style={styles.image} />
       <Text style={styles.label}>{item.name}</Text>
     </TouchableOpacity>

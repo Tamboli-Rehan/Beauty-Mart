@@ -17,11 +17,12 @@ import {
   Button,
   FlatList,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -45,16 +46,14 @@ export default function ProductScreen() {
   const route = useRoute();
   const currentUser = auth.currentUser;
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [dropdownValue, setsetDropdownValue] = useState(null);
-  const [dropdownItems, setsetDropdownItems] = useState([
-    { label: "1", value: "1" },
-    { label: "2", value: "2" },
-    { label: "3", value: "3" },
-    { label: "4", value: "4" },
-    { label: "5", value: "5" },
-    { label: "6", value: "6" },
+  const [dropdownValue, setDropdownValue] = useState(null);
+  const [dropdownItems, setDropdownItems] = useState([
+    { label: "Bath & Body", value: "Bath & Body" },
+    { label: "Fragrance", value: "Fragrance" },
+    { label: "Hair Care", value: "Hair Care" },
+    { label: "Make-up", value: "Make-up" },
+    { label: "Menicure & Pedicure", value: "Menicure & Pedicure" },
   ]);
-
   useEffect(() => {
     if (!currentUser) return;
 
@@ -82,7 +81,7 @@ export default function ProductScreen() {
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaType.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.7,
     });
 
@@ -115,11 +114,9 @@ export default function ProductScreen() {
     }
 
     setLoading(true);
-    console.log("Upload started");
 
     try {
       // Prepare form data for Cloudinary
-      console.log("Preparing form data");
       const formData = new FormData();
       formData.append("file", {
         uri: imageUri,
@@ -138,7 +135,6 @@ export default function ProductScreen() {
         throw new Error("Cloudinary upload failed");
       } else {
         setLoading(false);
-        console.log("Image uploaded successfully");
       }
 
       const data = await response.json();
@@ -150,21 +146,19 @@ export default function ProductScreen() {
       const imageUrl = data.secure_url;
       const publicId = data.public_id;
 
-      console.log("✅ Cloudinary Public ID:", publicId); // 👈 This logs the public ID
 
       // Save product info in Firestore
       try {
-        console.log("Adding product to Firestore...");
         const docRef = await addDoc(collection(db, "products"), {
           name,
           quantity: Number(quantity),
           description,
+          category: dropdownValue,
           imageUrl,
           publicId,
           userId: currentUser.uid,
           createdAt: new Date(),
         });
-        console.log("Product added with ID:", docRef.id);
 
         Toast.show({
           type: "success",
@@ -185,10 +179,8 @@ export default function ProductScreen() {
       alert("Failed to add product. Try again.");
     } finally {
       setLoading(false);
-      console.log("Upload finished, loading set to false");
     }
   };
-  console.log("Current products in state:", products);
 
   const handleDeleteProduct = async (productId) => {
     try {
@@ -221,127 +213,130 @@ export default function ProductScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-      <TouchableOpacity style={styles.header} onPress={handleGoBack}>
-        <Ionicons name="arrow-back-outline" size={24} color="black" />
-        <Text style={styles.headerText}>Customize Product</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
-        {imageUri ? (
-          <Image source={{ uri: imageUri }} style={styles.image} />
-        ) : (
-          <Text>Select Image from Gallery</Text>
-        )}
-      </TouchableOpacity>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <TouchableOpacity style={styles.header} onPress={handleGoBack}>
+          <Ionicons name="arrow-back-outline" size={24} color="black" />
+          <Text style={styles.headerText}>Customize Product</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
+          {imageUri ? (
+            <Image source={{ uri: imageUri }} style={styles.image} />
+          ) : (
+            <Text>Select Image from Gallery</Text>
+          )}
+        </TouchableOpacity>
 
-      <Button title="Take Photo" onPress={takePhoto} />
+        <Button title="Take Photo" onPress={takePhoto} />
 
-      <TextInput
-        placeholder="Product Name"
-        value={name}
-        onChangeText={setName}
-        style={styles.input}
-        editable={!loading}
-      />
-      <TextInput
-        placeholder="Quantity"
-        value={quantity}
-        onChangeText={setQuantity}
-        keyboardType="numeric"
-        style={styles.input}
-        editable={!loading}
-      />
-      {/* <TextInput
+        <TextInput
+          placeholder="Product Name"
+          value={name}
+          onChangeText={setName}
+          style={styles.input}
+          editable={!loading}
+        />
+        <TextInput
+          placeholder="Quantity"
+          value={quantity}
+          onChangeText={setQuantity}
+          keyboardType="numeric"
+          style={styles.input}
+          editable={!loading}
+        />
+        {/* <TextInput
           placeholder="Category"
           onChangeText={setCategory}
           style={styles.input}
           editable={!loading}
         /> */}
-      <DropDownPicker
-        open={dropdownOpen}
-        value={dropdownValue}
-        items={dropdownItems}
-        setOpen={setDropdownOpen}
-        setValue={setsetDropdownValue}
-        setItems={setsetDropdownItems}
-        placeholder="Select Category"
-        style={styles.dropdown}
-        dropDownContainerStyle={styles.dropdownContainer}
-      />
-      <TextInput
-        placeholder="Description: must add weight and dimensions too"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-        style={[styles.input, { height: 80 }]}
-        editable={!loading}
-      />
-
-      <Button
-        title={loading ? "Saving..." : "Save Product"}
-        onPress={uploadProduct}
-        disabled={loading}
-      />
-
-      <Text style={styles.subtitle}>Your Products</Text>
-
-      {products.length === 0 ? (
-        <Text>No products added yet.</Text>
-      ) : (
-        <FlatList
-          data={products}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingHorizontal: 6 }}
-          renderItem={({ item }) => (
-            <View style={styles.productCard}>
-              <View
-                style={{
-                  position: "relative",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                {deleteLoading === item.id && (
-                  <ActivityIndicator
-                    style={styles.imageLoader && { color: "red" }}
-                    size="small"
-                    color="#999"
-                  />
-                )}
-                <Image
-                  source={{ uri: item.imageUrl }}
-                  style={styles.productImage}
-                  onLoadStart={() => setLoadingImageId(item.id)}
-                  onLoadEnd={() => setLoadingImageId(null)}
-                />
-                {loadingImageId === item.id && (
-                  <ActivityIndicator
-                    style={styles.imageLoader}
-                    size="small"
-                    color="#999"
-                  />
-                )}
-                <TouchableOpacity
-                  onPress={() => handleDeleteProduct(item.id)}
-                  style={{ padding: 8 }}
-                >
-                  <Ionicons name="trash-outline" size={24} color="red" />
-                </TouchableOpacity>
-              </View>
-              <View>
-                <Text style={styles.productName}>{item.name}</Text>
-                <Text style={{ fontWeight: "bold" }}>Qty: {item.quantity}</Text>
-                <Text numberOfLines={3} ellipsizeMode="tail">
-                  {item.description}
-                </Text>
-              </View>
-            </View>
-          )}
+        <View style={{ zIndex: 1000 }}>
+          <DropDownPicker
+            open={dropdownOpen}
+            value={dropdownValue}
+            items={dropdownItems}
+            setOpen={setDropdownOpen}
+            setValue={setDropdownValue}
+            setItems={setDropdownItems}
+            placeholder="Select Category"
+            style={[styles.dropdown, { marginVertical: 12 }]}
+          />
+        </View>
+        <TextInput
+          placeholder="Description: must add weight and dimensions too"
+          value={description}
+          onChangeText={setDescription}
+          multiline
+          style={[styles.input, { height: 80 }]}
+          editable={!loading}
         />
-      )}
-      {/* </ScrollView> */}
+
+        <Button
+          title={loading ? "Saving..." : "Save Product"}
+          onPress={uploadProduct}
+          disabled={loading}
+        />
+
+        <Text style={styles.subtitle}>Your Products</Text>
+
+        {products.length === 0 ? (
+          <Text>No products added yet.</Text>
+        ) : (
+          <FlatList
+            data={products}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ paddingHorizontal: 6 }}
+            renderItem={({ item }) => (
+              <View style={styles.productCard}>
+                <View
+                  style={{
+                    position: "relative",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {deleteLoading === item.id && (
+                    <ActivityIndicator
+                      style={styles.imageLoader && { color: "red" }}
+                      size="small"
+                      color="#999"
+                    />
+                  )}
+                  <Image
+                    source={{ uri: item.imageUrl }}
+                    style={styles.productImage}
+                    onLoadStart={() => setLoadingImageId(item.id)}
+                    onLoadEnd={() => setLoadingImageId(null)}
+                  />
+                  {loadingImageId === item.id && (
+                    <ActivityIndicator
+                      style={styles.imageLoader}
+                      size="small"
+                      color="#999"
+                    />
+                  )}
+                  <TouchableOpacity
+                    onPress={() => handleDeleteProduct(item.id)}
+                    style={{ padding: 8 }}
+                  >
+                    <Ionicons name="trash-outline" size={24} color="red" />
+                  </TouchableOpacity>
+                </View>
+                <View>
+                  <Text style={styles.productName}>{item.name}</Text>
+                  <Text style={{ fontWeight: "bold" }}>
+                    Qty: {item.quantity}
+                  </Text>
+                  <Text numberOfLines={3} ellipsizeMode="tail">
+                    {item.description}
+                  </Text>
+                </View>
+              </View>
+            )}
+          />
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -406,5 +401,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
+  },
+  dropdown: {
+    borderColor: "#ccc",
+    borderRadius: 8,
   },
 });

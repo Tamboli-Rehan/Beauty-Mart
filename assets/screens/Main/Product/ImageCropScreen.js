@@ -41,7 +41,6 @@ const ImageCropScreen = () => {
         ],
         { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
       );
-      console.log(result, "Cropped Image Result");
       setCroppedImage(result.uri);
 
       // Go back and pass cropped image

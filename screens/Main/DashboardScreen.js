@@ -19,7 +19,7 @@ import { db } from "../../firebaseConfigue";
 const DashboardScreen = () => {
   // const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
-    categories: 0,
+    categories: 8,
     products: 0,
     users: 0,
     lowStock: 0,
@@ -71,7 +71,6 @@ const DashboardScreen = () => {
           // Fetch total registered users
           const userSnapshot = await getDocs(collection(db, "users"));
           const totalUsers = userSnapshot.size;
-          console.log("Registered users count:", totalUsers);
 
           // Set products and stats
           setProducts(userProducts);
@@ -127,7 +126,6 @@ const DashboardScreen = () => {
           <Text style={styles.noProductsText}>No products added yet.</Text>
         ) : (
           <FlatList
-            contentContainerStyle={{ paddingBottom: 20 }}
             data={products}
             keyExtractor={(item) => item.id}
             horizontal
@@ -237,12 +235,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  productItem: {
-    flexDirection: "column",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: "#eee",
   },
   productImage: { width: "100%", height: "80%", borderRadius: 8 },
   productName: { fontWeight: "bold", fontSize: 12, marginBottom: 4 },

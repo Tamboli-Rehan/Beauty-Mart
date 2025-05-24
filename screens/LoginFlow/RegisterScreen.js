@@ -15,10 +15,10 @@ import Toast from "react-native-toast-message";
 import { auth, db } from "../../firebaseConfigue";
 
 function RegistrationScreen() {
-  const [name, setName] = useState("Rehan");
-  const [email, setEmail] = useState("rehan.j.tamboli112@gmail.com");
-  const [phone, setPhone] = useState("9152132162");
-  const [password, setPassword] = useState("qwerty123");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigation = useNavigation();
   const [showPassword, setShowPassword] = useState(false);
@@ -55,7 +55,6 @@ function RegistrationScreen() {
       .then(async (userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log("User registered:", user);
         await setDoc(doc(db, "users", user.uid), {
           name,
           email,

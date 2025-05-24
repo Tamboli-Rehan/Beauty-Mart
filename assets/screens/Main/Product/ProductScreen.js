@@ -52,7 +52,6 @@ export default function ProductScreen() {
     { label: "3", value: "3" },
     { label: "4", value: "4" },
     { label: "5", value: "5" },
-    { label: "6", value: "6" },
   ]);
 
   useEffect(() => {
@@ -115,11 +114,9 @@ export default function ProductScreen() {
     }
 
     setLoading(true);
-    console.log("Upload started");
 
     try {
       // Prepare form data for Cloudinary
-      console.log("Preparing form data");
       const formData = new FormData();
       formData.append("file", {
         uri: imageUri,
@@ -138,7 +135,6 @@ export default function ProductScreen() {
         throw new Error("Cloudinary upload failed");
       } else {
         setLoading(false);
-        console.log("Image uploaded successfully");
       }
 
       const data = await response.json();
@@ -150,11 +146,9 @@ export default function ProductScreen() {
       const imageUrl = data.secure_url;
       const publicId = data.public_id;
 
-      console.log("✅ Cloudinary Public ID:", publicId); // 👈 This logs the public ID
 
       // Save product info in Firestore
       try {
-        console.log("Adding product to Firestore...");
         const docRef = await addDoc(collection(db, "products"), {
           name,
           quantity: Number(quantity),
@@ -164,7 +158,6 @@ export default function ProductScreen() {
           userId: currentUser.uid,
           createdAt: new Date(),
         });
-        console.log("Product added with ID:", docRef.id);
 
         Toast.show({
           type: "success",
@@ -185,10 +178,8 @@ export default function ProductScreen() {
       alert("Failed to add product. Try again.");
     } finally {
       setLoading(false);
-      console.log("Upload finished, loading set to false");
     }
   };
-  console.log("Current products in state:", products);
 
   const handleDeleteProduct = async (productId) => {
     try {
